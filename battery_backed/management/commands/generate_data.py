@@ -33,13 +33,17 @@ class Command(BaseCommand):
         # Generate timestamps with corresponding data
         current_time = start_time
         index = 0
+        state_of_charge = 0
+        flow_last_min = 0
         while current_time <= end_time and index < len(invertor_power):
+            state_of_charge += invertor_power[index]*0.97
+            flow_last_min = (invertor_power[index]*0.97)/60
             BatteryLiveStatus.objects.create(
                 devId='batt-0001',
                 timestamp=current_time,
-                state_of_charge=0,  # Add logic here if you have specific state_of_charge data
-                flow_last_min=0,  # Add logic here if you have specific flow_last_min data
-                invertor_power=invertor_power[index]
+                state_of_charge=state_of_charge,  # Add logic here if you have specific state_of_charge data
+                flow_last_min=flow_last_min,  # Add logic here if you have specific flow_last_min data
+                invertor_power=invertor_power[index]*0.97
             )
             current_time += timedelta(minutes=1)
             index += 1
