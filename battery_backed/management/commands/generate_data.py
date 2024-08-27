@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         BatteryLiveStatus.objects.all().delete()
         start_time = "2024-08-27 00:00"
-        end_time = "2024-08-27 16:24"
+        end_time = "2024-08-27 16:38"
         
         # Parse the start and end timestamps
         start_time = make_aware(parse_datetime(start_time))
@@ -36,14 +36,18 @@ class Command(BaseCommand):
         state_of_charge = 0
         flow_last_min = 0
         while current_time <= end_time and index < len(invertor_power):
-            state_of_charge += invertor_power[index]*0.97
+            state_of_charge += (invertor_power[index]*0.97)/60
             flow_last_min = (invertor_power[index]*0.97)/60
+            invertor = invertor_power[index]*0.97
+            rounded_soc = f"{round(state_of_charge, 2):.2f}"
+            rounded_flow_last_min = f"{round(flow_last_min, 2):.2f}"
+            rounded_invertor = f"{round(invertor, 2):.2f}"
             BatteryLiveStatus.objects.create(
                 devId='batt-0001',
                 timestamp=current_time,
-                state_of_charge=state_of_charge,  # Add logic here if you have specific state_of_charge data
-                flow_last_min=flow_last_min,  # Add logic here if you have specific flow_last_min data
-                invertor_power=invertor_power[index]*0.97
+                state_of_charge=rounded_soc,  # Add logic here if you have specific state_of_charge data
+                flow_last_min=rounded_flow_last_min,  # Add logic here if you have specific flow_last_min data
+                invertor_power=rounded_invertor
             )
             current_time += timedelta(minutes=1)
             index += 1
