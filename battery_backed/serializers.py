@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import StateOfCharge
+from .models import BatteryLiveStatus
 
 
-class BatterySocSerializer(serializers.ModelSerializer):
+class BatteryLiveSerializer(serializers.ModelSerializer):
     timestamp = serializers.SerializerMethodField()
     class Meta:
-        model = StateOfCharge
+        model = BatteryLiveStatus
         fields = '__all__'
     
     def get_timestamp(self, obj):

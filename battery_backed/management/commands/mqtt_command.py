@@ -1,6 +1,6 @@
 from typing import Any, Optional
 from django.core.management.base import BaseCommand
-from battery_backed.models import StateOfCharge
+from battery_backed.models import BatteryLiveStatus
 from datetime import datetime
 from pytz import timezone
 import paho.mqtt.client as mqtt
@@ -22,7 +22,7 @@ class Command(BaseCommand):
         def on_connect(client, userdata, flags, rc):           
             if rc == 0:
                 print("Connected successfully")
-                client.subscribe("battery_scada")
+                client.subscribe("battery_scada/#")
             else:
                 print(f"Connection failed with code {rc}")
 
@@ -41,20 +41,19 @@ class Command(BaseCommand):
                 data_out = eval(payload_str)  # In a safe environment, consider using literal_eval from ast
                 print(f"Evaluated payload: {data_out}")
 
-                if isinstance(data_out, dict):                    
-                    soc = data_out.get('SoC', None)
-                    first_key, first_value = next(iter(data_out.items()))
-                    battery_current_status = first_key
-                    battery_invertor_power = first_value
-
-                    if soc is not None and battery_current_status is not None and battery_invertor_power is not None:
-                        # now = datetime.now(timezone('Europe/London')).replace(second=0, microsecond=0) #minute resolution
-                        # print(f"{now},{soc},{battery_current_status},{battery_invertor_power}")
-                        
-                        battery = StateOfCharge(                             
+                if isinstance(data_out, dict):
+                    dev_id = data_out.get('devId', None)                   
+                    soc = data_out.get('soc', None)
+                    flow_last_min = data_out.get('flow_last_min', None)
+                    invertor = data_out.get('invertor', None)
+                    print(f"SOC:{soc}, flow: {flow_last_min}, inv: {invertor}")
+                    if dev_id is not None and soc is not None and flow_last_min is not None and invertor is not None:        
+                                                           
+                        battery = BatteryLiveStatus(  
+                            devId=dev_id,                           
                             state_of_charge=soc, 
-                            current_status= battery_current_status, 
-                            invertor_power= battery_invertor_power
+                            flow_last_min= flow_last_min, 
+                            invertor_power= invertor
                         )
                         print(battery)
                         battery.save()
