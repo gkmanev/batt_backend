@@ -46,10 +46,12 @@ class Command(BaseCommand):
                     soc = data_out.get('soc', None)
                     flow_last_min = data_out.get('flow_last_min', None)
                     invertor = data_out.get('invertor', None)
+                    timestamp = data_out.get('timestamp', None)
                     print(f"SOC:{soc}, flow: {flow_last_min}, inv: {invertor}")
-                    if dev_id is not None and soc is not None and flow_last_min is not None and invertor is not None:        
+                    if dev_id is not None and soc is not None and flow_last_min is not None and invertor is not None and timestamp is not None:        
                                                            
                         battery = BatteryLiveStatus(  
+                            timestamp=timestamp,
                             devId=dev_id,                           
                             state_of_charge=soc, 
                             flow_last_min= flow_last_min, 
