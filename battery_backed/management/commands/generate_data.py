@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         BatteryLiveStatus.objects.all().delete()
         start_time = "2024-08-27 00:00"
-        end_time = "2024-08-27 16:38"
+        end_time = "2024-08-27 17:22"
         
         # Parse the start and end timestamps
         start_time = make_aware(parse_datetime(start_time))
