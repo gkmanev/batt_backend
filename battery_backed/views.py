@@ -15,5 +15,5 @@ class StateViewSet(viewsets.ModelViewSet):
         if date_range:
             today = timezone.now().date()           
             if date_range == 'today':
-                queryset = queryset.filter(timestamp__gte=today)            
+                queryset = queryset.filter(timestamp__gte=today).order_by('timestamp')            
         return queryset

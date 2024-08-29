@@ -8,6 +8,8 @@ class Command(BaseCommand):
     help = 'Empty db'
 
     def handle(self, *args, **kwargs):
-        BatteryLiveStatus.objects.filter(devId='batt-0002').delete()        
+        all = BatteryLiveStatus.objects.filter(devId='batt-0002')
+
+        
 
         self.stdout.write(self.style.SUCCESS('Database successfully empted'))

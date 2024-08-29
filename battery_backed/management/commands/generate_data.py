@@ -18,7 +18,12 @@ class Command(BaseCommand):
         
         # Invertor power data provided for every 15 minutes
   
-        data = [10, 10, 0, 0, 10, 10, 10, 20, 20, 20, -20, -20, -20, -20, -20, 0, 0.0, 0.0, 0.0, 0, 25, 25, 25, 25, -10, 0, 0, 0, 0, 0, 0, 0, -25, -25, -25, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, -20, 0, 0, 0, 0, 0, 0, 0, 0, 0, -20, -20, -20, -20, -20, 25, 25, 25, 25, 25, -20, -20, -20, -20, -20, -20, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -4]
+        data = [25, 25, 25, 25, 0, 0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25, 25, 
+    25, 25, 25, 25, -10, 0, 0, 0, 0, 0, 0, 0, -25, -25, -25, -25, -25, -25, 
+    -25, -25, 10, 10, 10, 10, 10, 10, 10, 10, -25, -25, -25, -25, -25, -25, 
+    -25, -25, -25, -25, -19, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 
+    25, 25, 25, 25, 25, 25, 25, 25, 15, 0, 0, 0, -25, -25, -25, -25, -25, 
+    -25, -25, -25, -25, -25, -25, -25, -25]
 
 
         # Resample the data to have a value for each minute
@@ -32,14 +37,14 @@ class Command(BaseCommand):
         state_of_charge = 0
         flow_last_min = 0
         while current_time <= end_time and index < len(invertor_power):
-            state_of_charge += (invertor_power[index]*0.97)/60
+            state_of_charge += (invertor_power[index]*0.97)/60            
             flow_last_min = (invertor_power[index]*0.97)/60
             invertor = invertor_power[index]*0.97
             rounded_soc = f"{round(state_of_charge, 2):.2f}"
             rounded_flow_last_min = f"{round(flow_last_min, 2):.2f}"
             rounded_invertor = f"{round(invertor, 2):.2f}"
             BatteryLiveStatus.objects.create(
-                devId='batt-0002',
+                devId='batt-0001',
                 timestamp=current_time,
                 state_of_charge=rounded_soc,  # Add logic here if you have specific state_of_charge data
                 flow_last_min=rounded_flow_last_min,  # Add logic here if you have specific flow_last_min data
