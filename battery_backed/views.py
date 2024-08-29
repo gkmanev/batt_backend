@@ -10,13 +10,17 @@ class StateViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset =  super().get_queryset()        
-        date_range = self.request.query_params.get('date_range',None)     
-
+        date_range = self.request.query_params.get('date_range', None)     
+        dev_id = self.request.query_params.get('devId', None)
         # Filter by date_range if provided
         if date_range:
             today = timezone.now().date()           
             if date_range == 'today':
-                queryset = queryset.filter(timestamp__gte=today).order_by('timestamp')
+                if dev_id:
+                    queryset = queryset.filter(timestamp__gte=today, devId=dev_id).order_by('timestamp')
+                else:
+                    queryset = queryset.filter(timestamp__gte=today).order_by('timestamp')
+
             # Adjust the state_of_charge values based on your conditions
         for obj in queryset:
             if obj.state_of_charge <= 0:
