@@ -9,7 +9,7 @@ from pytz import timezone
 class MonthManager(models.Manager):
     def get_queryset(self):
         dataset = super().get_queryset().annotate(
-            created=TruncHour('timestamp')).values('timestamp_hour').annotate(
+            created=TruncHour('timestamp')).values('created').annotate(
                 state_of_charge=Avg('state_of_charge'),
                 flow_last_min=Avg('flow_last_min'),
                 invertor_power=Avg('invertor_power')
