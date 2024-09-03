@@ -10,12 +10,10 @@ class MonthManager(models.Manager):
     def get_queryset(self):
         today = datetime.now(timezone('Europe/London')).date()
         beginning_of_month = today.replace(day=1)
-        # Truncate to the hour and aggregate by hour
         return (
             super().get_queryset()
             .filter(timestamp__gt=beginning_of_month)
             .annotate(hour=TruncHour('timestamp'))
-            .values('hour')
             .annotate(
                 avg_state_of_charge=Avg('state_of_charge'),
                 avg_flow_last_min=Avg('flow_last_min'),
@@ -28,12 +26,10 @@ class YearManager(models.Manager):
     def get_queryset(self):
         today = datetime.now(timezone('Europe/London')).date()
         beginning_of_year = today.replace(month=1, day=1)
-        # Truncate to the day and aggregate by day
         return (
             super().get_queryset()
             .filter(timestamp__gt=beginning_of_year)
             .annotate(day=TruncDay('timestamp'))
-            .values('day')
             .annotate(
                 avg_state_of_charge=Avg('state_of_charge'),
                 avg_flow_last_min=Avg('flow_last_min'),
