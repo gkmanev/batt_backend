@@ -8,14 +8,15 @@ from pytz import timezone
 
 class MonthManager(models.Manager):
     def get_queryset(self):
-        dataset = super().get_queryset().annotate(
-            created=TruncHour('timestamp')).values('created').annotate(
-                state_of_charge=Avg('state_of_charge'),
-                flow_last_min=Avg('flow_last_min'),
-                invertor_power=Avg('invertor_power')
-                ).values(
-                    'devId','created','state_of_charge','flow_last_min','invertor_power').order_by('created')
-        return dataset
+        return super().get_queryset().annotate(
+            created=TruncHour('timestamp')
+        ).values(
+            'devId', 'created'
+        ).annotate(
+            state_of_charge=Avg('state_of_charge'),
+            flow_last_min=Avg('flow_last_min'),
+            invertor_power=Avg('invertor_power')
+        ).order_by('created')
 
 class YearManager(models.Manager):
     def get_queryset(self):

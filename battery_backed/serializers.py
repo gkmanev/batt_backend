@@ -14,9 +14,10 @@ from .models import BatteryLiveStatus
 
 class BatteryLiveSerializer(serializers.ModelSerializer):
     created = serializers.ReadOnlyField()
+    
     class Meta:
         model = BatteryLiveStatus
-        fields = ('devId', 'timestamp','created', 'state_of_charge', 'flow_last_min', 'invertor_power')
+        fields = ('devId', 'created', 'state_of_charge', 'flow_last_min', 'invertor_power')
 
 
 
