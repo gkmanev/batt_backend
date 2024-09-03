@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import BatteryLiveStatus
-from .serializers import BatteryLiveSerializer,BatteryLiveAggregatedByDaySerializer,BatteryLiveAggregatedByHourSerializer
+from .serializers import BatteryLiveSerializer
 from django.db.models import Case, When, Value, F, FloatField
 
 
