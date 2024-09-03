@@ -13,11 +13,14 @@ from .models import BatteryLiveStatus
 #         return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 class BatteryLiveSerializer(serializers.ModelSerializer):
-    timestamp = serializers.ReadOnlyField()
+    timestamp = serializers.SerializerMethodField()  # Use SerializerMethodField to rename
     
     class Meta:
         model = BatteryLiveStatus
         fields = ('devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power')
+
+    def get_timestamp(self, obj):
+        return obj.hourly_timestamp  # Map the field name in the serializer
 
 
 
