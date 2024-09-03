@@ -7,10 +7,22 @@ from pytz import timezone
 
 
 class MonthManager(models.Manager):
-    def get_queryset(self):
-        dataset = super().get_queryset().annotate(timestamp=TruncHour('timestamp')).values('timestamp').annotate(value=Avg('value')).values('devId','timestamp','state_of_charge','flow_last_min','invertor_power').order_by('timestamp')
-        return dataset
+        def get_queryset(self):
+            queryset = super().get_queryset().annotate(
+                truncated_timestamp=TruncHour('timestamp')
+            )
+            queryset = queryset.values(
+                'devId', 'truncated_timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power'
+            ).annotate(
+                avg_value=Avg('value')
+            ).order_by('truncated_timestamp')
 
+            queryset = queryset.annotate(
+                timestamp=models.F('truncated_timestamp')
+            ).values(
+                'devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power', 'avg_value'
+            )
+            
 class YearManager(models.Manager):
     def get_queryset(self):
         today = datetime.now(timezone('Europe/London')).date()
