@@ -15,3 +15,10 @@ class BatteryLiveSerializer(serializers.ModelSerializer):
         return obj.get('truncated_timestamp')  # Access the annotated field from the dictionary
 
 
+
+class BatteryLiveSerializerToday(serializers.ModelSerializer):
+    timestamp = serializers.ReadOnlyField()  # Ensure the field is included
+
+    class Meta:
+        model = BatteryLiveStatus
+        fields = ('devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power')
