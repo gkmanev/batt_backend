@@ -8,21 +8,29 @@ from pytz import timezone
 
 class MonthManager(models.Manager):
         def get_queryset(self):
+            # Annotate the queryset to truncate the timestamp to the hour
             queryset = super().get_queryset().annotate(
                 truncated_timestamp=TruncHour('timestamp')
             )
+            
+            # Group by hour and compute average for state_of_charge, flow_last_min, and invertor_power
             queryset = queryset.values(
-                'devId', 'truncated_timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power'
+                'devId', 'truncated_timestamp'
             ).annotate(
-                avg_value=Avg('value')
+                avg_state_of_charge=Avg('state_of_charge'),
+                avg_flow_last_min=Avg('flow_last_min'),
+                avg_invertor_power=Avg('invertor_power')
             ).order_by('truncated_timestamp')
-
+            
+            # Rename 'truncated_timestamp' to 'timestamp'
             queryset = queryset.annotate(
                 timestamp=models.F('truncated_timestamp')
             ).values(
-                'devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power', 'avg_value'
+                'devId', 'timestamp', 'avg_state_of_charge', 'avg_flow_last_min', 'avg_invertor_power'
             )
-            
+
+            return queryset
+
 class YearManager(models.Manager):
     def get_queryset(self):
         today = datetime.now(timezone('Europe/London')).date()
