@@ -1,7 +1,9 @@
 from rest_framework import viewsets
 from .models import BatteryLiveStatus
 from .serializers import BatteryLiveSerializer
-from django.utils import timezone
+from django.db.models import Case, When, Value, F, FloatField
+
+
 
 class StateViewSet(viewsets.ModelViewSet):
     queryset = BatteryLiveStatus.objects.all()
@@ -9,32 +11,31 @@ class StateViewSet(viewsets.ModelViewSet):
     
 
     def get_queryset(self):
-        queryset =  super().get_queryset()        
+        queryset = super().get_queryset()
+
+        # Applying filters based on query parameters
         date_range = self.request.query_params.get('date_range', None)     
         dev_id = self.request.query_params.get('devId', None)
-        # Filter by date_range if provided
-        if date_range:                
-            if date_range == 'today':
-                if dev_id:
-                    queryset = BatteryLiveStatus.today.filter(devId=dev_id)
-                else:
-                    queryset = BatteryLiveStatus.today.all()
-            elif date_range == 'month':
-                if dev_id:
-                    queryset = BatteryLiveStatus.month.filter(devId=dev_id)
-                else:
-                    queryset = BatteryLiveStatus.month.all()
-            else:
-                if dev_id:
-                    queryset = BatteryLiveStatus.year.filter(devId=dev_id)
-                else:
-                    queryset = BatteryLiveStatus.year.all()
 
-            # Adjust the state_of_charge values based on your conditions
-        for obj in queryset:
-            if obj.state_of_charge <= 0:
-                obj.state_of_charge = 0
-            elif obj.state_of_charge >= 100:
-                obj.state_of_charge = 100
+        if date_range:
+            if date_range == 'today':
+                queryset = BatteryLiveStatus.today.all()
+            elif date_range == 'month':
+                queryset = BatteryLiveStatus.month.all()
+            else:
+                queryset = BatteryLiveStatus.year.all()
+
+        if dev_id:
+            queryset = queryset.filter(devId=dev_id)
+
+        # Adjust state_of_charge to be within 0-100 range in a single database operation
+        queryset = queryset.annotate(
+            adjusted_soc=Case(
+                When(state_of_charge__lte=0, then=Value(0)),
+                When(state_of_charge__gte=100, then=Value(100)),
+                default=F('state_of_charge'),
+                output_field=FloatField()
+            )
+        )
 
         return queryset
