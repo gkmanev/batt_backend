@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime, timedelta
 from django.db.models import Avg
-from django.db.models.functions import TruncDay, TruncHour
+from django.db.models.functions import TruncDay, TruncHour, Round
 from pytz import timezone
 
 
@@ -9,14 +9,14 @@ from pytz import timezone
 class MonthManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().annotate(
-            created=TruncHour('timestamp')
+            timestamp=TruncHour('timestamp')
         ).values(
-            'devId', 'created'
+            'timestamp'
         ).annotate(
             state_of_charge=Avg('state_of_charge'),
             flow_last_min=Avg('flow_last_min'),
             invertor_power=Avg('invertor_power')
-        ).order_by('created')
+        ).order_by('timestamp')
 
 class YearManager(models.Manager):
     def get_queryset(self):
@@ -28,9 +28,9 @@ class YearManager(models.Manager):
             .annotate(day=TruncDay('timestamp'))
             .values('day')
             .annotate(
-                avg_state_of_charge=Avg('state_of_charge'),
-                avg_flow_last_min=Avg('flow_last_min'),
-                avg_invertor_power=Avg('invertor_power')
+                state_of_charge=Round(Avg('state_of_charge'), 2),
+                flow_last_min=Round(Avg('flow_last_min'), 2),
+                invertor_power=Round(Avg('invertor_power'), 2)
             )
             .order_by('day')
         )

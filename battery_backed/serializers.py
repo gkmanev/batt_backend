@@ -13,11 +13,11 @@ from .models import BatteryLiveStatus
 #         return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 class BatteryLiveSerializer(serializers.ModelSerializer):
-    created = serializers.ReadOnlyField()
+    timestamp = serializers.ReadOnlyField()
     
     class Meta:
         model = BatteryLiveStatus
-        fields = ('devId', 'created', 'state_of_charge', 'flow_last_min', 'invertor_power')
+        fields = ('devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power')
 
 
 
