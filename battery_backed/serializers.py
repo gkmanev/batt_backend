@@ -14,13 +14,13 @@ from .models import BatteryLiveStatus
 
 class BatteryLiveSerializer(serializers.ModelSerializer):
     timestamp = serializers.SerializerMethodField()  # Use SerializerMethodField to rename
-    
+
     class Meta:
         model = BatteryLiveStatus
         fields = ('devId', 'timestamp', 'state_of_charge', 'flow_last_min', 'invertor_power')
 
     def get_timestamp(self, obj):
-        return obj.hourly_timestamp  # Map the field name in the serializer
+        return obj.get('truncated_timestamp')  # Access the annotated field from the dictionary
 
 
 

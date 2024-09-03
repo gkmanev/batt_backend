@@ -9,14 +9,14 @@ from pytz import timezone
 class MonthManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().annotate(
-            hourly_timestamp=TruncHour('timestamp')
+            truncated_timestamp=TruncHour('timestamp')  # Annotate with a unique name
         ).values(
-            'hourly_timestamp'
+            'devId', 'truncated_timestamp'
         ).annotate(
-            state_of_charge=Avg('state_of_charge'),
-            flow_last_min=Avg('flow_last_min'),
-            invertor_power=Avg('invertor_power')
-        ).order_by('hourly_timestamp')
+            state_of_charge=Round(Avg('state_of_charge'), 2),
+            flow_last_min=Round(Avg('flow_last_min'), 2),
+            invertor_power=Round(Avg('invertor_power'), 2)
+        ).order_by('truncated_timestamp')
 
 class YearManager(models.Manager):
     def get_queryset(self):
