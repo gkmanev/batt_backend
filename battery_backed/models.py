@@ -36,7 +36,7 @@ class YearManager(models.Manager):
 
 class TodayManager(models.Manager):
     def get_queryset(self):
-        today = datetime.now(timezone('Europe/London')).date()
+        today = datetime.now(timezone('Europe/Sofia')).date()
         tomorrow = today + timedelta(1)
         today_start = str(today)+'T'+'00:00:00Z'
         today_end = str(tomorrow)+'T'+'00:00:00Z'
