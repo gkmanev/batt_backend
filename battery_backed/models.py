@@ -6,7 +6,7 @@ from pytz import timezone
 
 
 
-class MonthPostManager(models.Manager):
+class MonthManager(models.Manager):
     def get_queryset(self):
         dataset = super().get_queryset().annotate(
             created=TruncHour('timestamp')).values('timestamp_hour').annotate(
