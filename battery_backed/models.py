@@ -18,22 +18,21 @@ class MonthManager(models.Manager):
             invertor_power=Round(Avg('invertor_power'), 2)
         ).order_by('truncated_timestamp')
 
+
+
 class YearManager(models.Manager):
     def get_queryset(self):
-        today = datetime.now(timezone('Europe/London')).date()
-        beginning_of_year = today.replace(month=1, day=1)
-        return (
-            super().get_queryset()
-            .filter(timestamp__gt=beginning_of_year)
-            .annotate(day=TruncDay('timestamp'))
-            .values('day')
-            .annotate(
-                state_of_charge=Round(Avg('state_of_charge'), 2),
-                flow_last_min=Round(Avg('flow_last_min'), 2),
-                invertor_power=Round(Avg('invertor_power'), 2)
-            )
-            .order_by('day')
-        )
+        return super().get_queryset().annotate(
+            truncated_timestamp=TruncDay('timestamp')  # Annotate with a unique name
+        ).values(
+            'devId', 'truncated_timestamp'
+        ).annotate(
+            state_of_charge=Round(Avg('state_of_charge'), 2),
+            flow_last_min=Round(Avg('flow_last_min'), 2),
+            invertor_power=Round(Avg('invertor_power'), 2)
+        ).order_by('truncated_timestamp')
+
+
 
 class TodayManager(models.Manager):
     def get_queryset(self):
