@@ -12,16 +12,23 @@ from .models import BatteryLiveStatus
 #         # Return the timestamp formatted to minute resolution
 #         return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
-
 class BatteryLiveSerializer(serializers.ModelSerializer):
-    timestamp = serializers.ReadOnlyField()
-    avg_state_of_charge = serializers.ReadOnlyField()
-    avg_flow_last_min = serializers.ReadOnlyField()
-    avg_invertor_power = serializers.ReadOnlyField()
-
+    created = serializers.ReadOnlyField()
     class Meta:
         model = BatteryLiveStatus
-        fields = ('devId', 'timestamp', 'avg_state_of_charge', 'avg_flow_last_min', 'avg_invertor_power')
+        fields = ('devId', 'timestamp','created', 'state_of_charge', 'flow_last_min', 'invertor_power')
+
+
+
+# class BatteryLiveSerializer(serializers.ModelSerializer):
+#     timestamp = serializers.ReadOnlyField()
+#     avg_state_of_charge = serializers.ReadOnlyField()
+#     avg_flow_last_min = serializers.ReadOnlyField()
+#     avg_invertor_power = serializers.ReadOnlyField()
+
+#     class Meta:
+#         model = BatteryLiveStatus
+#         fields = ('devId', 'timestamp', 'avg_state_of_charge', 'avg_flow_last_min', 'avg_invertor_power')
 
 
 
