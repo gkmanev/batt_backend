@@ -13,13 +13,22 @@ class StateViewSet(viewsets.ModelViewSet):
         date_range = self.request.query_params.get('date_range', None)     
         dev_id = self.request.query_params.get('devId', None)
         # Filter by date_range if provided
-        if date_range:
-            today = timezone.now().date()           
+        if date_range:                
             if date_range == 'today':
                 if dev_id:
-                    queryset = queryset.filter(timestamp__gte=today, devId=dev_id).order_by('timestamp')
+                    queryset = BatteryLiveStatus.today.filter(devId=dev_id)
                 else:
-                    queryset = queryset.filter(timestamp__gte=today).order_by('timestamp')
+                    queryset = BatteryLiveStatus.today.all()
+            elif date_range == 'month':
+                if dev_id:
+                    queryset = BatteryLiveStatus.month.filter(devId=dev_id)
+                else:
+                    queryset = BatteryLiveStatus.month.all()
+            else:
+                if dev_id:
+                    queryset = BatteryLiveStatus.year.filter(devId=dev_id)
+                else:
+                    queryset = BatteryLiveStatus.year.all()
 
             # Adjust the state_of_charge values based on your conditions
         for obj in queryset:
