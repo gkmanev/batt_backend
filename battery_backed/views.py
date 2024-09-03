@@ -6,17 +6,17 @@ from django.db.models import Case, When, Value, F, FloatField
 
 
 class StateViewSet(viewsets.ModelViewSet):
-    
-    queryset = BatteryLiveStatus.objects.all()   
 
-    def get_serializer_class(self):
-        # Determine if you're dealing with raw data or aggregated data
-        date_range = self.request.query_params.get('date_range', None)
-        if date_range == 'year':
-            return BatteryLiveAggregatedByDaySerializer  # Use the serializer for yearly aggregation (by day)
-        elif date_range == 'month':
-            return BatteryLiveAggregatedByHourSerializer  # Use the serializer for monthly aggregation (by hour)
-        return BatteryLiveSerializer  # Use the raw data serializer for other cases
+    queryset = BatteryLiveStatus.objects.all()   
+    serializer_class = BatteryLiveSerializer
+    # def get_serializer_class(self):
+    #     # Determine if you're dealing with raw data or aggregated data
+    #     date_range = self.request.query_params.get('date_range', None)
+    #     if date_range == 'year':
+    #         return BatteryLiveAggregatedByDaySerializer  # Use the serializer for yearly aggregation (by day)
+    #     elif date_range == 'month':
+    #         return BatteryLiveAggregatedByHourSerializer  # Use the serializer for monthly aggregation (by hour)
+    #     return BatteryLiveSerializer  # Use the raw data serializer for other cases
 
 
     def get_queryset(self):

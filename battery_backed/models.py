@@ -6,21 +6,10 @@ from pytz import timezone
 
 
 
-class MonthManager(models.Manager):    
+class MonthManager(models.Manager):
     def get_queryset(self):
-        today = datetime.now(timezone('Europe/London')).date()
-        beginning_of_month = today.replace(day=1)
-        return (
-            super().get_queryset()
-            .filter(timestamp__gt=beginning_of_month)
-            .annotate(hour=TruncHour('timestamp'))
-            .annotate(
-                avg_state_of_charge=Avg('state_of_charge'),
-                avg_flow_last_min=Avg('flow_last_min'),
-                avg_invertor_power=Avg('invertor_power')
-            )
-            .order_by('hour')
-        )
+        dataset = super().get_queryset().annotate(timestamp=TruncHour('timestamp')).values('timestamp').annotate(value=Avg('value')).values('devId','timestamp','state_of_charge','flow_last_min','invertor_power').order_by('timestamp')
+        return dataset
 
 class YearManager(models.Manager):
     def get_queryset(self):
